@@ -253,7 +253,7 @@
         if (item.checked) li.classList.add('checked');
 
         li.innerHTML = `
-          <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggle('${item.id}', ${item.checked})" />
+          <input type="checkbox" ${item.checked ? 'checked' : ''} onclick="toggle('${item.id}', this.checked)" />
           <span class="item-text">${escapeHtml(item.text)}</span>
           <button class="delete-btn" onclick="remove('${item.id}')" title="삭제">✕</button>
         `;
@@ -292,16 +292,16 @@
       }
     }
 
-    async function toggle(id, currentChecked) {
+    async function toggle(id, newChecked) {
       try {
         const res = await fetch(`${API}?id=eq.${id}`, {
           method: 'PATCH',
           headers: HEADERS,
-          body: JSON.stringify({ checked: !currentChecked })
+          body: JSON.stringify({ checked: newChecked })
         });
         if (!res.ok) throw new Error(await res.text());
         const idx = items.findIndex(i => i.id === id);
-        if (idx !== -1) items[idx].checked = !currentChecked;
+        if (idx !== -1) items[idx].checked = newChecked;
         render();
       } catch (e) {
         showError('업데이트 실패: ' + e.message);
